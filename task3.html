@@ -1,0 +1,57 @@
+<!DOCTYPE html
+    PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>
+
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Computer Graphics - Final Project</title>
+
+        <link href="style.css" rel="stylesheet">
+
+        <script src="uiUtil.js"></script>
+
+        <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+
+        <script type="importmap">
+        {
+            "imports": {
+            "three": "https://unpkg.com/three@v0.152.2/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@v0.152.2/examples/jsm/"
+            }
+        }
+        </script>
+    </head>
+
+    <body>
+        <div class="header-container">
+            <a href="index.html">Home</a>
+            <h1>Final Project: Cel Shading and Silhouettes</h1>
+            <h2>Task 3: Cel Shading - Toon shading</h2>
+        </div>
+
+        <div>
+            <!-- ================================================================= -->
+            <hr>
+            <p>
+                We refer to <a href="https://youtu.be/mnxs6CR6Zrk">this video</a> by Jasper to gain
+                a grasp of how cel shading was done in Zelda: The Wind Waker, which pioneered the 
+                shading method. We adapted the "toonification" part of the shading to a scale from 
+                0 to 1 instead of 0 to 255, as suggested in the video, because it follows three.js convention. 
+                We opted to use the small range from 0.47 to 0.53 luminosity, which we found by using the 120/255
+                and 136/255 values that Jasper mentions in the video to stay true to the aesthetic of cel
+                shading as seen in Zelda: The Wind Waker. Compared to the previous task, one will see
+                the difference in the amount of shape that is illuminated by the light with a rather
+                rapid (but still gradual) change in light and dark portions of each shape. All luminosities
+                that were less than or equal to 0.47 were black and those that were greater than or equal
+                to 0.53 were white.
+            </p>
+            <!-- ================================================================= -->
+        </div>
+        <script type="module" src="task3.js"></script> <!-- remember to change js name -->
+
+    </body>
+
+</html>

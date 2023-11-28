@@ -1,0 +1,60 @@
+<!DOCTYPE html
+    PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>
+
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Computer Graphics - Final Project</title>
+
+        <link href="style.css" rel="stylesheet">
+
+        <script src="uiUtil.js"></script>
+
+        <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+
+        <script type="importmap">
+        {
+            "imports": {
+            "three": "https://unpkg.com/three@v0.152.2/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@v0.152.2/examples/jsm/"
+            }
+        }
+        </script>
+    </head>
+
+    <body>
+        <div class="header-container">
+            <a href="index.html">Home</a>
+            <h1>Final Project: Cel Shading and Silhouettes</h1>
+            <h2>Task 4: Cel Shading - Ambient/Scene colors</h2>
+        </div>
+
+        <div>
+            <!-- ================================================================= -->
+            <hr>
+            <p>
+                We refer to <a href="https://youtu.be/mnxs6CR6Zrk">this video</a> by Jasper for some of
+                the color values used in this section.
+                <br><br>
+                We have modified the toon_shade_color function to store a value if the current vertex
+                is lit up by light by utilizing the existing conditions of whether or not a luminosity
+                value is a shadow or not (stored in boolean isHighlight). For each condition, we call
+                calc_vertex_color, which takes in isHighlight and uses an integer Mode value stored as
+                a constant to determine time of day, to return the appropriate color for the shadows and
+                highlights of an object given the time of day. These colors are based on those that are
+                used in Zelda: The Wind Waker.
+                <br><br>
+                We still manage to employ the section of smooth gradient in the very center of the luminosity
+                change in toon_shade_color when the vertex is not a shadow nor a fully highlighted vertex by
+                scaling down the highlight color and adding it to the shadow color.
+            </p>
+            <!-- ================================================================= -->
+        </div>
+        <script type="module" src="task4.js"></script> <!-- remember to change js name -->
+
+    </body>
+
+</html>
