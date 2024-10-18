@@ -14,7 +14,7 @@ const int Mode = 1; // 0 is day, 1 is night
 const float LOW = 0.47;
 const float HIGH = 0.53;
 
-// Based on color concepts from: https://www.youtube.com/watch?v=mnxs6CR6Zrk
+// Color values based on color concepts from: https://www.youtube.com/watch?v=mnxs6CR6Zrk
 // Given time of day and if vertex is in highlights, output the proper color
 vec3 calc_vertex_color(bool isHighlight) {
 	if (Mode == 0) {
@@ -27,7 +27,7 @@ vec3 calc_vertex_color(bool isHighlight) {
 		if (isHighlight) {
 			return vec3(0.46, 0.58, 0.69);;
 		} else {
-			return 0.8 * vec3(0.46, 0.58, 0.69);;
+			return 0.8 * vec3(0.46, 0.58, 0.69);
 		}
 	}
 }
@@ -84,48 +84,21 @@ void main() {
 
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.z = 5;
 
 const renderer = new THREE.WebGLRenderer();
-renderer.setSize( window.innerWidth/1.11, window.innerHeight/1.11 );
+renderer.setSize(window.innerWidth/1.11, window.innerHeight/1.11);
 // renderer.setClearColor(0xccccc); // For easier viewing of shading result
 const controls = new OrbitControls(camera, renderer.domElement);
 
-document.body.appendChild( renderer.domElement );
+document.body.appendChild(renderer.domElement);
 
-const cubeGeometry = new THREE.BoxGeometry( 1, 1, 1, 1000, 1000, 1000 );
-// const cubeGeometry = new THREE.SphereGeometry(.5, 100, 100)
-const tkGeometry = new THREE.TorusKnotGeometry( 1.3, 0.3, 1000, 1000 );
-
-// const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-const material = new THREE.ShaderMaterial({
-	uniforms: {},
-	vertexShader: _VS,
-	fragmentShader: _FS,
-});
 
 // Add objects
-// const cube = new THREE.Mesh( cubeGeometry, material );
-// cube.position.x = 1;
-// cube.position.y = 1;
-// cube.position.z = 2;
-// scene.add( cube );
-
-// const torus = new THREE.Mesh( tkGeometry, material );
-// torus.position.x = -1;
-// torus.position.x = -1;
-// torus.position.x = -1;
-// scene.add( torus );
-
-var keyLight = new THREE.DirectionalLight(new THREE.Color('white') , 1.0);
-keyLight.position.set(-100, 50, 100);
-var fillLight = new THREE.DirectionalLight(new THREE.Color('white'), 0.75);
-fillLight.position.set(100, 0, 100);
-var backLight = new THREE.DirectionalLight(0xffffff,1.0);
-backLight.position.set(100, 0,-100).normalize();
-scene.add(keyLight);
-scene.add(fillLight);
-scene.add(backLight);
+var mainLight = new THREE.DirectionalLight(new THREE.Color('white') , 5.0);
+mainLight.position.set(4, 1, 4);
+scene.add(mainLight);
 
 // model source: https://www.models-resource.com/gamecube/legendofzeldathewindwaker/model/24113/
 let mtlLoader = new MTLLoader();
@@ -133,61 +106,18 @@ mtlLoader.setResourcePath('/assets/models/Darknut_Sword/');
 mtlLoader.setPath('/assets/models/Darknut_Sword/');
 mtlLoader.load('Tn_ken1.mtl', (materials) => {
 	materials.preload();
-	// console.log(materials);
 
 	let objLoader = new OBJLoader();
 	objLoader.setMaterials(materials);
 	objLoader.setPath('/assets/models/Darknut_Sword/');
 	objLoader.load('Tn_ken1.obj', (object) => {
-		// console.log(object);
-		// object.traverse( function( child ) {
-		//     if ( child instanceof THREE.Mesh ) {
-		//         child.material = material;
-		//     }
-		// } );
-		// object.setMaterials(materials);
-
-		// object.rotation.y += 1;
-		// object.rotation.z += 1.5;
-		// console.log('hi');
-		// console.log(object);
 		object.rotation.y -= 5;
 		object.rotation.x -= 5;
 		object.position.set(0, 0, 0);
-		// object.scale.set(100, 100, 100);
 		scene.add(object);
-		// console.log('bye');
-		// renderer.render(scene, camera);
 	});
-	// console.log(true);
 });
 
-// const gltfLoader = new GLTFLoader();
-// gltfLoader.load('assets/models/glTF/ToyCar.gltf', (gltf) => {
-// 	// gltf.scene.scale(new THREE.Vector3(10.0));
-// 	gltf.scene.scale.set(100, 100, 100);
-// 	console.log(gltf.scene);
-// 	scene.add(gltf.scene);
-// });
-
-// let objLoader = new OBJLoader();
-// // objLoader.setMaterials(materials);
-// objLoader.setPath('/assets/models/Darknut_Sword/');
-// objLoader.load('Tn_ken1.obj', function(object) {
-// 	// object.traverse( function( child ) {
-// 	//     if ( child instanceof THREE.Mesh ) {
-// 	//         child.material = material;
-// 	//     }
-// 	// } );
-// 	// object.setMaterials(materials);
-
-// 	object.rotation.y += 1;
-// 	object.rotation.z += 1.5;
-// 	scene.add(object);
-// });
-
-// camera.position.y = 2;
-camera.position.z = 5;
 
 // automatic canvas resize based on user window
 function resizeCanvas(){
@@ -200,13 +130,6 @@ window.addEventListener('resize', resizeCanvas);
 
 function animate() {
 	requestAnimationFrame(animate);
-
-	// cube.rotation.x -= 0.005;
-	// cube.rotation.y -= 0.005;
-
-	// torus.rotation.x += 0.005;
-	// torus.rotation.y += 0.005;
-
 	renderer.render(scene, camera);
 }
 

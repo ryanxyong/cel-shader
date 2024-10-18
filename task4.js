@@ -4,13 +4,13 @@ var _VS = `
 varying vec3 Color;
 const vec3 LightPosition = vec3(4, 1, 4);
 const vec3 LightIntensity = vec3(20);
-const int Mode = 1; // 0 is day, 1 is night
+const int Mode = 0; // 0 is day, 1 is night
 
 // Source for LOW and HIGH values: https://www.youtube.com/watch?v=mnxs6CR6Zrk
 const float LOW = 0.47;
 const float HIGH = 0.53;
 
-// Based on color concepts from: https://www.youtube.com/watch?v=mnxs6CR6Zrk
+// Color values based on color concepts from: https://www.youtube.com/watch?v=mnxs6CR6Zrk
 // Given time of day and if vertex is in highlights, output the proper color
 vec3 calc_vertex_color(bool isHighlight) {
 	if (Mode == 0) {
@@ -23,7 +23,7 @@ vec3 calc_vertex_color(bool isHighlight) {
 		if (isHighlight) {
 			return vec3(0.46, 0.58, 0.69);;
 		} else {
-			return 0.8 * vec3(0.46, 0.58, 0.69);;
+			return 0.8 * vec3(0.46, 0.58, 0.69);
 		}
 	}
 }
@@ -81,17 +81,15 @@ void main() {
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+camera.position.z = 5;
 
 const renderer = new THREE.WebGLRenderer();
-renderer.setSize( window.innerWidth/1.11, window.innerHeight/1.11 );
+renderer.setSize(window.innerWidth/1.11, window.innerHeight/1.11);
 renderer.setClearColor(0xccccc); // For easier viewing of shading result
-document.body.appendChild( renderer.domElement );
+document.body.appendChild(renderer.domElement);
 
-const cubeGeometry = new THREE.BoxGeometry( 1, 1, 1, 1000, 1000, 1000 );
-// const cubeGeometry = new THREE.SphereGeometry(.5, 100, 100)
-const tkGeometry = new THREE.TorusKnotGeometry( 1.3, 0.3, 1000, 1000 );
-
-// const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+const cubeGeometry = new THREE.BoxGeometry(1, 1, 1, 1000, 1000, 1000);
+const tkGeometry = new THREE.TorusKnotGeometry(1.3, 0.3, 1000, 1000);
 const material = new THREE.ShaderMaterial({
 	uniforms: {},
 	vertexShader: _VS,
@@ -99,19 +97,18 @@ const material = new THREE.ShaderMaterial({
 });
 
 // Add objects
-const cube = new THREE.Mesh( cubeGeometry, material );
+const cube = new THREE.Mesh(cubeGeometry, material);
 cube.position.x = 1;
 cube.position.y = 1;
 cube.position.z = 2;
-scene.add( cube );
+scene.add(cube);
 
-const torus = new THREE.Mesh( tkGeometry, material );
+const torus = new THREE.Mesh(tkGeometry, material);
 torus.position.x = -1;
 torus.position.x = -1;
 torus.position.x = -1;
-scene.add( torus );
+scene.add(torus);
 
-camera.position.z = 5;
 
 // automatic canvas resize based on user window
 function resizeCanvas(){
@@ -123,7 +120,7 @@ function resizeCanvas(){
 window.addEventListener('resize', resizeCanvas);
 
 function animate() {
-	requestAnimationFrame( animate );
+	requestAnimationFrame(animate);
 
 	cube.rotation.x -= 0.005;
 	cube.rotation.y -= 0.005;
@@ -131,7 +128,7 @@ function animate() {
 	torus.rotation.x += 0.005;
 	torus.rotation.y += 0.005;
 
-	renderer.render( scene, camera );
+	renderer.render(scene, camera);
 }
 
 animate();

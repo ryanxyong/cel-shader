@@ -3,22 +3,20 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { ColladaLoader } from 'three/addons/loaders/ColladaLoader.js';
 
 
 var _VS = `
-// uniform vec3 LightPosition; // Sun position
-const vec3 LightPosition = vec3(4, 1, 4); // CHANGE THIS FOR LIGHT POSITIONS FOR NOW
+uniform vec3 LightPosition;
+uniform vec3 LightIntensity;
 varying vec3 ToonColor; // Toonified color
 varying vec2 uv2; // For incorporating the texture color with toon shading
-const vec3 LightIntensity = vec3(20); // CHANGE THIS FOR LIGHT INTENSITIES FOR NOW
 const int Mode = 0; // 0 is day, 1 is night
 
 // Source for LOW and HIGH values: https://www.youtube.com/watch?v=mnxs6CR6Zrk
 const float LOW = 0.47;
 const float HIGH = 0.53;
 
-// Based on color concepts from: https://www.youtube.com/watch?v=mnxs6CR6Zrk
+// Color values based on color concepts from: https://www.youtube.com/watch?v=mnxs6CR6Zrk
 // Given time of day and if vertex is in highlights, output the proper color
 vec3 calc_vertex_color(bool isHighlight) {
 	if (Mode == 0) { // if day time
@@ -31,7 +29,7 @@ vec3 calc_vertex_color(bool isHighlight) {
 		if (isHighlight) {
 			return vec3(0.46, 0.58, 0.69);;
 		} else {
-			return 0.8 * vec3(0.46, 0.58, 0.69);;
+			return 0.8 * vec3(0.46, 0.58, 0.69);
 		}
 	}
 }
@@ -90,7 +88,6 @@ void main() {
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-// camera.position.y = 0;
 camera.position.z = 2;
 
 const renderer = new THREE.WebGLRenderer();
@@ -103,24 +100,14 @@ document.body.appendChild(renderer.domElement);
 
 
 // Add lights
-// var keyLight = new THREE.DirectionalLight(new THREE.Color('white'), 1.0);
-// keyLight.position.set(4, 1, 4);
-// scene.add(keyLight);
+var mainLight = new THREE.DirectionalLight(new THREE.Color('white') , 20.0);
+mainLight.position.set(4, 1, 4);
+scene.add(mainLight);
 
-var keyLight = new THREE.DirectionalLight(new THREE.Color('white') , 1.0);
-keyLight.position.set(30, 0, 0);
-// var fillLight = new THREE.DirectionalLight(new THREE.Color('white'), 0.75);
-// fillLight.position.set(100, 0, 100);
-// var backLight = new THREE.DirectionalLight(0xffffff,1.0);
-// backLight.position.set(100, 0,-100).normalize();
-scene.add(keyLight);
-// scene.add(fillLight);
-// scene.add(backLight);
-
-
+// **** //
 // given a child mesh from an imported model and a set of materials mats,
 // incorporates model texture in toon shading
-// from https://stackoverflow.com/questions/25198312/how-to-access-colors-in-three-shadermaterial-using-three-objmtlloader
+// code from https://stackoverflow.com/questions/25198312/how-to-access-colors-in-three-shadermaterial-using-three-objmtlloader
 function set_toon_material(child, mats) {
 	if (child instanceof THREE.Mesh) { // if child is a Mesh
 		if (child.material.id in mats) { // if material has already been processed
@@ -128,8 +115,9 @@ function set_toon_material(child, mats) {
 		} else { // if new material found
 			mats[child.material.id] = new THREE.ShaderMaterial({ // process texture through toon shader
 				uniforms: {
-					MaterialTexture: {value: child.material.map},	// for incorporating model texture
-					LightPosition: {value: keyLight.position}		// for incorporating our scene light
+					MaterialTexture: {value: child.material.map},					// for model texture
+					LightPosition: {value: mainLight.position},						// for scene light positions
+					LightIntensity: {value: new THREE.Vector3(mainLight.intensity)}  // for scene light intensity
 				},
 				vertexShader: _VS,
 				fragmentShader: _FS
@@ -140,15 +128,7 @@ function set_toon_material(child, mats) {
 
 	return mats;
 }
-
-// for toonifying imported model's material(s)
-function toon_shade(object) {
-	let mats = {};
-
-	object.traverse(function(child) {
-		mats = set_toon_material(child, mats);
-	});
-}
+// **** //
 
 
 // Add objects
@@ -170,50 +150,9 @@ mtlLoader.load('Tn_ken1.mtl', (materials) => {
 
 		object.rotation.y -= 5;
 		object.rotation.x -= 5;
-		// object.scale.set(5, 5, 5);
 		scene.add(object);
 	});
 });
-
-// Daiku model
-// const daeLoader = new ColladaLoader();
-// daeLoader.setPath('/assets/models/Daiku/');
-// daeLoader.setResourcePath('/assets/models/Daiku/');
-// daeLoader.load('disciple.dae', (dae) => {
-// 	console.log(dae);
-// 	let mats = {};
-// 	dae.scene.traverse(function(child) {
-// 		mats = set_toon_material(child, mats);
-// 	});
-// 	dae.scene.scale.set(10, 10, 10);
-// 	scene.add(dae.scene);
-// });
-
-// Ganon's Castle model
-// const daeLoader = new ColladaLoader();
-// daeLoader.setPath('/assets/environments/Ganons_Castle_Outside/');
-// daeLoader.setResourcePath('/assets/environments/Ganons_Castle_Outside/');
-// daeLoader.load('000.dae', (dae) => {
-// 	console.log(dae);
-// 	let mats = {};
-// 	dae.scene.traverse(function(child) {
-// 		mats = set_toon_material(child, mats);
-// 	});
-// 	scene.add(dae.scene);
-// });
-
-
-// Toy Car model
-// const gltfLoader = new GLTFLoader();
-// gltfLoader.load('assets/models/glTF/ToyCar.gltf', (gltf) => {
-// 	// gltf.scene.scale(new THREE.Vector3(10.0));
-// 	let mats = {};
-// 	gltf.scene.traverse( function( child ) {
-// 		mats = set_toon_material(child, mats);
-// 	} );
-// 	gltf.scene.scale.set(100, 100, 100);
-// 	scene.add(gltf.scene);
-// });
 
 
 // automatic canvas resize based on user window

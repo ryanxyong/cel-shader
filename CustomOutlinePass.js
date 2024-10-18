@@ -1,3 +1,5 @@
+// Adapted from https://github.com/OmarShehata/webgl-outlines
+
 import * as THREE from "three";
 import { Pass } from "three/addons/postprocessing/Pass.js";
 import { FullScreenQuad } from "three/addons/postprocessing/Pass.js";
@@ -273,7 +275,7 @@ class CustomOutlinePass extends Pass {
         sceneColorBuffer: {},
         depthBuffer: {},
         surfaceBuffer: {},
-        outlineColor: { value: new THREE.Color(0xFFFFFF) },
+        outlineColor: { value: new THREE.Color(0) },
         //4 scalar values packed in one uniform: depth multiplier, depth bias, and same for normals.
         multiplierParameters: {
           value: new THREE.Vector4(.9, 20, 1, 0)

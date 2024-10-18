@@ -1,9 +1,8 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { ColladaLoader } from 'three/addons/loaders/ColladaLoader.js';
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
@@ -95,12 +94,12 @@ void main() {
 
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
-camera.position.z = 2;
+const camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 10000);
+camera.position.z = 1300;
+camera.position.y = 250;
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth/1.11, window.innerHeight/1.11);
-renderer.setClearColor(0xffffff); // For easier viewing of shading result
 const orbitCamera = new OrbitControls(camera, renderer.domElement);
 orbitCamera.listenToKeyEvents(window);
 
@@ -172,8 +171,8 @@ function set_toon_material(child, mats) {
 		} else { // if new material found
 			mats[child.material.id] = new THREE.ShaderMaterial({ // process texture through toon shader
 				uniforms: {
-					MaterialTexture: {value: child.material.map},				   	 // for model texture
-					LightPosition: {value: mainLight.position},						 // for scene light positions
+					MaterialTexture: {value: child.material.map},					// for model texture
+					LightPosition: {value: mainLight.position},						// for scene light positions
 					LightIntensity: {value: new THREE.Vector3(mainLight.intensity)}  // for scene light intensity
 				},
 				vertexShader: _VS,
@@ -189,32 +188,66 @@ function set_toon_material(child, mats) {
 
 
 // Add lights
-var mainLight = new THREE.PointLight(new THREE.Color('white') , 22.0);
-mainLight.position.set(4, 1, 4); // Position found via trial and error
+var mainLight = new THREE.PointLight(new THREE.Color('white') , 1500000.0);
+mainLight.position.set(0, 1100, -650); // Position found via trial and error
 scene.add(mainLight);
 
+
 // Add objects
-// model source: https://www.models-resource.com/gamecube/legendofzeldathewindwaker/model/24113/
+// Our building object
+// https://www.models-resource.com/gamecube/legendofzeldathewindwaker/model/34729/
+const scale = 0.5;
+const sceneOffset = new THREE.Vector3(1175 * scale, 600 * scale, 2000 * scale); // used to center the scene
+const envLoader = new GLTFLoader();
+envLoader.load('assets/environments/final_scene.glb', (gltf) => {
+	let mats = {};
+	gltf.scene.traverse( function( child ) {
+		mats = set_toon_material(child, mats);
+	} );
+	gltf.scene.scale.set(scale, scale, scale);
+	gltf.scene.position.set(sceneOffset.x, sceneOffset.y, sceneOffset.z);
+	scene.add(gltf.scene);
+});
+
+// Bowser
+// https://www.models-resource.com/gamecube/ssbm/model/5397/
 let mtlLoader = new MTLLoader();
-mtlLoader.setResourcePath('/assets/models/Darknut_Sword/');
-mtlLoader.setPath('/assets/models/Darknut_Sword/');
-mtlLoader.load('Tn_ken1.mtl', (materials) => {
+mtlLoader.setResourcePath('/assets/models/Bowser/');
+mtlLoader.setPath('/assets/models/Bowser/');
+mtlLoader.load('Bowser.mtl', (materials) => {
 	materials.preload();
 
 	let objLoader = new OBJLoader();
 	objLoader.setMaterials(materials);
-	objLoader.setPath('/assets/models/Darknut_Sword/');
-	objLoader.load('Tn_ken1.obj', (object) => {
+	objLoader.setPath('/assets/models/Bowser/');
+	objLoader.load('Bowser.obj', (object) => {
 		let mats = {};
 		object.traverse(function(child) {
 			mats = set_toon_material(child, mats);
 		});
 
-		object.rotation.y -= 5;
-		object.rotation.x -= 5;
+		object.position.z = -670;
+		object.position.y = -250;
+		object.scale.set(4, 4, 4);
+
 		scene.add(object);
 	});
 });
+
+
+// For water in the base of building
+const waterGeometry = new THREE.BoxGeometry( 10000, 100, 10000 );
+const waterMaterial = new THREE.MeshBasicMaterial( { color: 0x2d5060 } );
+const cube = new THREE.Mesh(waterGeometry, waterMaterial);
+cube.position.set(0, -491, -670);
+scene.add(cube);
+
+// For light fixture at top of rotunda
+const lightGeometry = new THREE.SphereGeometry( 150, 100, 100 );
+const lightMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+const lightObj = new THREE.Mesh(lightGeometry, lightMaterial);
+lightObj.position.set(0, 1100, -670);
+scene.add(lightObj);
 
 
 // automatic canvas resize based on user window
@@ -226,9 +259,30 @@ function resizeCanvas(){
 }
 window.addEventListener('resize', resizeCanvas, false);
 
+let faceBack = false;
 function animate() {
 	requestAnimationFrame(animate);
-	// camera.position.z -= 0.5; // used to move camera as an animation
+	
+	// **** //
+	// for animating the camera movement
+	if (camera.position.z > -670) {
+		camera.position.z -= 2;
+	} else {
+		if (!faceBack && camera.rotation.x < 1.57) {
+			camera.rotation.x += 0.01;
+		} else {
+			faceBack = true;
+			if (camera.rotation.z < 3.1) {
+				camera.rotation.z += 0.01;
+			} else {
+				if (camera.rotation.x < 3.2) {
+					camera.rotation.x += 0.01;
+				}
+			}
+		}
+	}
+	// **** //
+
 	composer.render(scene, camera);
 }
 

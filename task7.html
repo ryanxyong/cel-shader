@@ -11,8 +11,6 @@
 
         <link href="style.css" rel="stylesheet">
 
-        <script src="uiUtil.js"></script>
-
         <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
 
         <script type="importmap">
@@ -36,12 +34,15 @@
             <!-- ================================================================= -->
             <hr>
             <p>
-                We imported a model of the Darknut Sword from <a href="https://www.models-resource.com/gamecube/legendofzeldathewindwaker/model/24113/">here</a>. We imported the existing OBJLoader and MTLLoader functions to properly load in the object and its associated material. In the next step, we will examine how to apply our toon shading to this model.
+                We imported a model of the Darknut Sword from <a href="https://www.models-resource.com/gamecube/legendofzeldathewindwaker/model/24113/">here</a>.<br>
+                We incorpated some code for generating outlines and allowing for inner lines for creases in geometery using a combination of depth and normals.
+                Source: https://github.com/OmarShehata/webgl-outlines
+                
                 <br><br>
             </p>
             <!-- ================================================================= -->
         </div>
-        <script type="module" src="task7.js"></script> <!-- remember to change js name -->
+        <script type="module" src="task7.js"></script>
 
     </body>
 

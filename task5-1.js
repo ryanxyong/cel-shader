@@ -11,7 +11,7 @@ const int Mode = 1; // 0 is day, 1 is night
 const float LOW = 0.47;
 const float HIGH = 0.53;
 
-// Based on color concepts from: https://www.youtube.com/watch?v=mnxs6CR6Zrk
+// Color values based on color concepts from: https://www.youtube.com/watch?v=mnxs6CR6Zrk
 // Given time of day and if vertex is in highlights, output the proper color
 vec3 calc_vertex_color(bool isHighlight) {
 	if (Mode == 0) {
@@ -24,7 +24,7 @@ vec3 calc_vertex_color(bool isHighlight) {
 		if (isHighlight) {
 			return vec3(0.46, 0.58, 0.69);;
 		} else {
-			return 0.8 * vec3(0.46, 0.58, 0.69);;
+			return 0.8 * vec3(0.46, 0.58, 0.69);
 		}
 	}
 }
@@ -81,20 +81,19 @@ void main() {
 
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.z = 5;
 
 const renderer = new THREE.WebGLRenderer();
-renderer.setSize( window.innerWidth/1.11, window.innerHeight/1.11 );
+renderer.setSize(window.innerWidth/1.11, window.innerHeight/1.11);
 renderer.setClearColor(0xccccc); // For easier viewing of shading result
 const controls = new OrbitControls(camera, renderer.domElement);
 
-document.body.appendChild( renderer.domElement );
+document.body.appendChild(renderer.domElement);
 
-const cubeGeometry = new THREE.BoxGeometry( 1, 1, 1, 1000, 1000, 1000 );
-// const cubeGeometry = new THREE.SphereGeometry(.5, 100, 100)
-const tkGeometry = new THREE.TorusKnotGeometry( 1.3, 0.3, 1000, 1000 );
+const cubeGeometry = new THREE.BoxGeometry(1, 1, 1, 1000, 1000, 1000);
+const tkGeometry = new THREE.TorusKnotGeometry(1.3, 0.3, 1000, 1000);
 
-// const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
 const material = new THREE.ShaderMaterial({
 	uniforms: {},
 	vertexShader: _VS,
@@ -102,71 +101,18 @@ const material = new THREE.ShaderMaterial({
 });
 
 // Add objects
-const cube = new THREE.Mesh( cubeGeometry, material );
+const cube = new THREE.Mesh(cubeGeometry, material);
 cube.position.x = 1;
 cube.position.y = 1;
 cube.position.z = 2;
 scene.add( cube );
 
-const torus = new THREE.Mesh( tkGeometry, material );
+const torus = new THREE.Mesh(tkGeometry, material);
 torus.position.x = -1;
 torus.position.x = -1;
 torus.position.x = -1;
-scene.add( torus );
+scene.add(torus);
 
-// var keyLight = new THREE.DirectionalLight (new THREE.Color ('hsl(30, 100%, 75%) ') , 1.0) ;
-// keyLight.position.set(-100, 0, 100);
-// var fillLight = new THREE.DirectionalLight (new THREE.Color ('hsl(240, 100%, 75%) ') , 0.75) ;
-// fillLight.position.set(100, 0, 100);
-// var backLight = new THREE.DirectionalLight('white',1.0);
-// backLight.position.set (100, 0,-100) . normalize();
-// scene.add(keyLight);
-// scene.add(fillLight);
-// scene.add(backLight);
-
-// let mtlLoader = new MTLLoader();
-// // mtlLoader.setResourcePath('/assets/models/Darknut_Sword/');
-// mtlLoader.setPath('/assets/models/bugatti/');
-// mtlLoader.load('bugatti.mtl', (materials) => {
-// 	materials.preload();
-// 	console.log(materials);
-
-
-// 	let objLoader = new OBJLoader();
-// 	objLoader.setMaterials(materials);
-// 	objLoader.setPath('/assets/models/bugatti/');
-// 	objLoader.load('bugatti.obj', (object) => {
-// 		console.log(object);
-// 		// object.traverse( function( child ) {
-// 		//     if ( child instanceof THREE.Mesh ) {
-// 		//         child.material = material;
-// 		//     }
-// 		// } );
-// 		// object.setMaterials(materials);
-
-// 		object.rotation.y += 1;
-// 		object.rotation.z += 1.5;
-// 		scene.add(object);
-// 	});
-// });
-
-// let objLoader = new OBJLoader();
-// // objLoader.setMaterials(materials);
-// objLoader.setPath('/assets/models/Darknut_Sword/');
-// objLoader.load('Tn_ken1.obj', function(object) {
-// 	// object.traverse( function( child ) {
-// 	//     if ( child instanceof THREE.Mesh ) {
-// 	//         child.material = material;
-// 	//     }
-// 	// } );
-// 	// object.setMaterials(materials);
-
-// 	object.rotation.y += 1;
-// 	object.rotation.z += 1.5;
-// 	scene.add(object);
-// });
-
-camera.position.z = 5;
 
 // automatic canvas resize based on user window
 function resizeCanvas(){
@@ -186,7 +132,7 @@ function animate() {
 	torus.rotation.x += 0.005;
 	torus.rotation.y += 0.005;
 
-	renderer.render( scene, camera );
+	renderer.render(scene, camera);
 }
 
 animate();

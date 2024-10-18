@@ -1,3 +1,5 @@
+// Adapted from https://github.com/OmarShehata/webgl-outlines
+
 import * as THREE from "three";
 
 /*
